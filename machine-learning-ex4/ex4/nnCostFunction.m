@@ -63,6 +63,7 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 % ----------------------------- Implement Cost Function --------------------------------
+
 X = [ones(m, 1), X];
 Z_1 = Theta1 * X';
 A_1 = sigmoid(Z_1); 
@@ -73,16 +74,25 @@ A_2 = sigmoid(Z_2);
 A_2 = A_2';
 
 J = 0.0;
-for i=1:m,
+for i = 1 : m,
     yy = zeros(num_labels, 1);
     yy(y(i)) = 1;
-    J += log(A_2(i,:)) * -yy - log(1 - A_2(i,:)) * (1 - yy);
+    J += log(A_2(i, :)) * -yy - log(1 - A_2(i, :)) * (1 - yy);
 end;
 
 J = 1 / m * J;
 
-% -------------------------------------------------------------
+% ----------------------------- Implement regularization -------------------------------
 
+Theta1 = Theta1(:, [2 : size(Theta1, 2)]);
+Theta2 = Theta2(:, [2 : size(Theta2, 2)]);
+
+sum1 = Theta1 .^ 2;
+sum1 = sum(sum(sum1));
+sum2 = Theta2 .^ 2;
+sum2 = sum(sum(sum2));
+
+J += lambda / (2 * m) * (sum1 + sum2)
 
 
 
