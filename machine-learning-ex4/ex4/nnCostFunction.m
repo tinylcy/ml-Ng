@@ -62,8 +62,13 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-% ----------------------------- Implement Cost Function --------------------------------
+% ------------------------------ Part 1 ------------------------------
 
+ori_X = X;
+ori_Theta1 = Theta1;
+ori_Theta2 = Theta2;
+
+% Implement Cost Function
 X = [ones(m, 1), X];
 Z_1 = Theta1 * X';
 A_1 = sigmoid(Z_1); 
@@ -82,7 +87,7 @@ end;
 
 J = 1 / m * J;
 
-% ----------------------------- Implement regularization -------------------------------
+% Implement regularization
 
 Theta1 = Theta1(:, [2 : size(Theta1, 2)]);
 Theta2 = Theta2(:, [2 : size(Theta2, 2)]);
@@ -92,9 +97,39 @@ sum1 = sum(sum(sum1));
 sum2 = Theta2 .^ 2;
 sum2 = sum(sum(sum2));
 
-J += lambda / (2 * m) * (sum1 + sum2)
+J += lambda / (2 * m) * (sum1 + sum2);
 
+% ------------------------------ Part 2 ------------------------------
 
+X = ori_X;
+Theta1 = ori_Theta1;
+Theta2 = ori_Theta2;
+
+for t = 1 : m,
+    a_1 = X(t, :)';
+    a_1 = [1; a_1];
+    z_2 = Theta1 * a_1;
+    a_2 = sigmoid(z_2);
+    a_2 = [1; a_2];
+    z_3 = Theta2 * a_2;
+    a_3 = sigmoid(z_3);
+
+    yy = zeros(num_labels, 1);
+    yy(y(t)) = 1;
+    delta_3 = a_3 - yy;
+    
+    % remove delta_2(0) corresponds to delta_2 = delta_2(2:end)
+    delta_2 = (Theta2' * delta_3)(2: end) .* sigmoidGradient(z_2);
+    
+    Theta1_grad += delta_2 * a_1';
+    Theta2_grad += delta_3 * a_2';
+
+end;
+
+Theta1_grad = Theta1_grad / m;
+Theta2_grad = Theta2_grad / m;
+
+% ------------------------------ Part 3 ------------------------------
 
 % =========================================================================
 
